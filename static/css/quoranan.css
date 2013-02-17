@@ -11,3 +11,9 @@ div.form {
 	background-color: rgb(220,220,220);
 	margin-bottom: 1em;
 }
+
+.item {
+  width: 400px;
+  margin: 10px;
+  float: left;
+}
