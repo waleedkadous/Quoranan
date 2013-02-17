@@ -1,0 +1,13 @@
+body {
+	font-family: sans-serif; 
+}
+
+div {
+	margin-bottom: 1em; 
+}
+
+div.form {
+	margin-top: 1em;
+	background-color: rgb(220,220,220);
+	margin-bottom: 1em;
+}

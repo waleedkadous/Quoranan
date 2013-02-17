@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/quoranan.css">
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1.0', {'packages':['piechart']});
+
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+
+      function drawChart() {
+
+        // Create the data table.
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Topic');
+        data.addColumn('number', 'Count');
+        data.addRows({{ graph_data|safe }});
+
+        // Set chart options
+        var options = {'title':'Answers by Topic on Quora for {{ user_name }}',
+                       'width':600,
+                       'height':300};
+
+        // Instantiate and draw our chart, passing in some options.
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Quoranan results</h1> 
+    <br/>
+    <div id="chart_div"></div>
+    {% for group in answers | groupby('topic') %}
+    <strong>{{ group.grouper }}</strong>
+      <ul>
+        {% for answer in group.list %}
+          <li><a href="{{ answer.link }}">{{ answer.question }}</a> ({{ answer.votes }} votes)</li>
+        {% endfor %}
+     </ul>
+     {% endfor %}
+  </body>
+</html>

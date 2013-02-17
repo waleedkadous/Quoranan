@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/quoranan.css">
+  </head>
+  <body>
+    <h1>Quoranan</h1>
+    <div>Welcome to Quoranan -- the Quora Answer Analysis tool.</div>
+    <div><strong>Warning:</strong>This is just a plaything. It doesn't come with any support. 
+    It's an experiment. Tested on one machine (Mac), one browser (Chrome) and 2 accounts. </div>
+    <div>Quoranan is a simple tool that allows you to analyze your answers on Quora.</div>
+    <div>It's not automated, and requires that you download the answers yourself. The steps are</div>
+    <h3>1. Go to your answers page (i.e. http://www.quora.com/&lt;User&gt;/answers). </h3> 
+      <a href="/static/img/screenshot_top_glow.jpg"><img width="400" src="/static/img/screenshot_top_glow.jpg"></a>
+    <h3>2. Click on "more" until all your articles are shown.</h3>
+      <a href="/static/img/screenshot_bottom_glow.jpg"><img width="400" src="/static/img/screenshot_bottom_glow.jpg"></a>
+    <h3>3. Save the results to your computer as html.</h3>
+       <a href="/static/img/screenshot_save_glow.jpg"><img width="400" src="/static/img/screenshot_save_glow.jpg"></a>
+    <h3>4. Upload the html file you saved in the box below.</h3>
+    <p/>
+    <div>We then produce a list of all the questions you've answered, sorted by topic and with total number of votes.
+    You can post this into a blog post on Quora, or anywhere else, e.g. a web page.</div>
+    <div>We don't store the data, we just give it back to you as html for easy pasting into other things.</div>
+    <div class="form">
+      
+      <form action="/analyze" method="post" enctype="multipart/form-data">
+      Saved html from answers page: <br/>
+      <input type="file" name="answers"><br/>
+      <input type="submit" value="Submit">
+      
+    </div>
+</form>
+    
+
+  </body>
+</html>
