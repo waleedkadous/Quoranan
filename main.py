@@ -43,7 +43,7 @@ def generate_graph_data(answers):
     parts.append('[')
     counts = Counter([a.topic for a in answers])
     for topic, count in counts.most_common(7):
-        parts.append('["%s",%d],' % (str(topic).replace('\n',''), count))
+        parts.append('["%s",%d],' % (topic.encode('ascii','ignore').replace('\n',''), count))
     other_count = sum(counts.values()) - sum([count for (topic, count) in counts.most_common(7)])
     parts.append('["Other",%d]' % other_count)
     parts.append(']')
