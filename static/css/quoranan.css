@@ -17,3 +17,18 @@ div.form {
   margin: 10px;
   float: left;
 }
+
+.res_item {
+	width: 500px;
+	margin: 10px; 
+	float: left; 
+	vertical-align: top; 	
+}
+
+.clear {
+	clear: both;
+}
+
+.stat {
+	padding: 5px; 
+}

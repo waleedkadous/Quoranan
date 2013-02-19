@@ -1,8 +1,20 @@
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="/static/css/quoranan.css">
-    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
-    <script type="text/javascript">
+<head>
+<title>Quora Answer Analyzer results for {{ user_name}}</title>
+<link rel="stylesheet" type="text/css" href="/static/css/quoranan.css">
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-38569166-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+<script type="text/javascript">
 
       // Load the Visualization API and the piechart package.
       google.load('visualization', '1.0', {'packages':['piechart']});
@@ -21,7 +33,7 @@
 
         // Set chart options
         var options = {'title':'Answers by Topic on Quora for {{ user_name }}',
-                       'width':600,
+                       'width':500,
                        'height':300};
 
         // Instantiate and draw our chart, passing in some options.
@@ -29,18 +41,33 @@
         chart.draw(data, options);
       }
     </script>
-  </head>
-  <body>
-    <h1>Quoranan results</h1> 
-    <br/>
-    <div id="chart_div"></div>
-    {% for group in answers | groupby('topic') %}
-    <strong>{{ group.grouper }}</strong>
-      <ul>
-        {% for answer in group.list %}
-          <li><a href="{{ answer.link }}">{{ answer.question }}</a> ({{ answer.votes }} votes)</li>
-        {% endfor %}
-     </ul>
-     {% endfor %}
-  </body>
+</head>
+<body>
+	<h1>Quoranan results</h1>
+	<br />
+	
+	<div id="chart_div" class="res_item"></div>
+	<div id="stats" class="res_item">
+	  <h3>Aggregate stats</h3>
+	  <br/>
+	  <table>
+	  <tr><td class="stat">Total articles:</td><td class="stat">{{ vote_stats.count }}</td></tr>
+	  <tr><td class="stat">Total votes:</td><td class="stat">{{ vote_stats.sum }}</td></tr>
+	  <tr><td class="stat">Mean votes:</td><td class="stat">{{ '%0.2f'|format(vote_stats.mean) }}</td></tr>
+	  <tr><td class="stat">Median votes:</td><td class="stat">{{ vote_stats.median }}</td></tr>
+	  <tr><td class="stat">Max votes:</td><td class="stat">{{ vote_stats.max }}</td></tr>
+	  </table>
+	</div>
+	<div class="clear"></div>
+	<div>
+	{% for group in answers | groupby('topic') %}
+	<strong>{{ group.grouper }}</strong>
+	<ul>
+		{% for answer in group.list %}
+		<li><a href="{{ answer.link }}">{{ answer.question }}</a> ({{
+			answer.votes }} votes)</li> {% endfor %}
+	</ul>
+	{% endfor %}
+	</div>
+</body>
 </html>
