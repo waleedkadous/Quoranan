@@ -2,17 +2,25 @@
 #
 # Copyright (c) 2013 Waleed Kadous. 
 
-import cgi
-import gc
-import itertools
+from collections import Counter
+from google.appengine.ext import db
+import datetime
 import jinja2
-import numpy
-import operator
-import os
-import webapp2
 import lxml
 import lxml.html
-from collections import Counter
+import numpy
+import os
+import random
+import string
+import webapp2
+import zlib
+
+
+class SavedResult(db.Model):
+    generated_at = db.DateTimeProperty()
+    last_read = db.DateTimeProperty()
+    visit_count = db.IntegerProperty()
+    generated_html = db.BlobProperty()
 
 
 class Answer(object):
@@ -59,9 +67,13 @@ def generate_vote_stats(answers):
     retval['mean'] = numpy.mean(votes)
     retval['max'] = max(votes)
     return retval
-    
 
-def generate_list(answers):
+
+def generate_key():
+    # Generates a random 8 digit base 36 value. 
+    return ''.join(random.choice(string.ascii_letters + string.digits) for x in range(8))
+
+def generate_list(answers, save_key):
     root = lxml.html.fromstring(answers)
     user_name = [x for x in root.findall('.//link') if 'application/rss+xml' in x.values()][0].attrib['href'].split('/')[3]
     my_questions = root.find_class('pagedlist_item')
@@ -74,7 +86,8 @@ def generate_list(answers):
     return template.render({'answers' : cat_q_s, 
                             'user_name' : user_name,
                             'graph_data' : generate_graph_data(cat_q_s),
-                            'vote_stats' : generate_vote_stats(cat_q_s)
+                            'vote_stats' : generate_vote_stats(cat_q_s),
+                            'save_key' : save_key
                             })
 
 jinja_environment = jinja2.Environment(
@@ -88,10 +101,26 @@ class MainPage(webapp2.RequestHandler):
         
 class Analyze(webapp2.RequestHandler):
     def post(self):
-        data = self.request.get("answers")
-        html_output = generate_list(data)
+        answers = self.request.get("answers")
+        save_key = generate_key()
+        html_output = generate_list(answers, save_key)
+        record = SavedResult(key_name = save_key, 
+                             generated_html = zlib.compress(html_output.encode('utf-8')),
+                             generated_at = datetime.datetime.now(),
+                             visit_count = 0)
+        record.put()
         self.response.out.write(html_output)
+        
+class Retrieve(webapp2.RequestHandler):
+    def get(self):
+        key_name = self.request.path.replace('/retrieve/','')
+        record = SavedResult.get_by_key_name(key_name)
+        record.visit_count = record.visit_count + 1
+        record.last_read = datetime.datetime.now()
+        record.put()
+        self.response.out.write(zlib.decompress(record.generated_html).decode('utf-8'))
 
 app = webapp2.WSGIApplication([('/', MainPage),
-                               ('/analyze',Analyze)], 
+                               ('/analyze', Analyze), 
+                               ('/retrieve/.*', Retrieve)],
                               debug=True)
