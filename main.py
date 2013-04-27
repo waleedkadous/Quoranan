@@ -34,8 +34,10 @@ def clean_vote(x):
     result = x.find_class('voter_count')
     if len(result) > 0: 
         return int(result[0].text_content())
-    else:
-        return 0
+    result = x.find_class('numbers')
+    if len(result) > 0: 
+        return int(result[0].text_content())
+    return 0
 
 def topic_question(str):
     parts = str.split(':')
