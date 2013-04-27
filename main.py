@@ -23,7 +23,7 @@ class Answer(object):
         self.votes = votes
 
 def clean_vote(x): 
-    result = x.find_class('numbers')
+    result = x.find_class('voter_count')
     if len(result) > 0: 
         return int(result[0].text_content())
     else:
